@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<html ng-app="smartParkingAdminApp" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="resources/css/bootstrap-responsive.css" rel="stylesheet">
+    <title>Smart Parking System - Sensor Management</title>
+	  <!-- Bootstrap Styles-->
+    <link href="resources/css/bootstrap.css" rel="stylesheet" />
+    <!-- FontAwesome Styles-->
+    <link href="resources/css/font-awesome.css" rel="stylesheet" />
+    <!-- Morris Chart Styles-->
+    <link href="resources/js/morris/morris-0.4.3.min.css" rel="stylesheet" />
+    <!-- Custom Styles-->
+    <link href="resources/css/custom-styles.css" rel="stylesheet" />
+    <!-- Google Fonts-->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+
+    <script src="resources/js/angular-1.4.8/angular.min.js"></script>
+
+    <script src="resources/js/angular-smart-parking-admin-user-management.js"></script>
+
+    <script src="resources/js/bootstrap.min.js"></script>
+
+    <script src="resources/js/cookie.js"></script>
+</head>
+<body>
+   <div id="wrapper">
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="login.html">Smart Parking</a>
+            </div>
+
+            <ul class="nav navbar-top-links navbar-right">
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html" onclick="cleanUserCookie();"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+        </nav>
+
+        <!--/. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+
+                    <li>
+                        <a href="dashboard.html"><i class="fa fa-dashboard"></i> Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="sensor-management.html"><i class="fa fa-desktop"></i> Sensor Management</a>
+                    </li>
+
+                    <li>
+                        <a class="active-menu" href="user-management.html"><i class="fa fa-sitemap"></i> User Management</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" ng-controller="UserManagementPanelController as UserManagementPanelCtrl" data-ng-init="init()">
+            <div id="page-inner" ng-cloak>
+             <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-header">
+                            User Management
+                        </h1>
+                    </div>
+                </div> 
+                 <!-- /. ROW  -->
+
+            <a data-toggle="modal" href="#myModal" class="btn btn-lg btn-primary" ng-click="UserManagementPanelCtrl.clickAdd();">Add user</a>
+            <br>   
+            <div class="row" >
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                             Sensor List
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Address</th>
+                                            <th>Login Name</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="odd gradeX" ng-repeat="thisUserInformation in userInformation track by $index">
+                                            <td>{{thisUserInformation.name}}</td>
+                                            <td>{{thisUserInformation.address}}</td>
+                                            <td>{{thisUserInformation.loginName}}</td>
+                                            <td class="center">
+                                                <button type="button" class="btn btn-sm btn-danger" ng-click="UserManagementPanelCtrl.clickDelete(thisUserInformation);">Delete</button> 
+                                                <a data-toggle="modal" href="#myModal" class="btn btn-sm btn-info" ng-click="UserManagementPanelCtrl.clickUpdate(thisUserInformation);">Update</a>
+                                                
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!--End Advanced Tables -->
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">{{inputModalTitle}}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Name</p>
+                                    <input type="text" id="inputName" class="form-control" placeholder="Name" ng-model="inputUser.name" required autofocus>
+
+                                    <p>Address</p>
+                                    <input type="text" id="inputAddress" class="form-control" placeholder="Address" ng-model="inputUser.address" required>
+
+                                    <p>Login Name</p>
+                                    <input type="text" id="inputLoginName" class="form-control" placeholder="Login Name" ng-model="inputUser.loginName" required>
+
+                                    <p>Password</p>
+                                    <input type="password" id="inputPassword" class="form-control" placeholder="Password" ng-model="inputUser.password" required>
+
+                                    <p>Password Again</p>
+                                    <input type="password" id="inputPasswordAgain" class="form-control" placeholder="Password Again" ng-model="inputUser.passwordAgain" required>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="UserManagementPanelCtrl.clickCancel();">Cancel</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="UserManagementPanelCtrl.clickOK();">OK</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+                </div>
+            </div>
+        </div>
+              
+    </div>
+        <footer><p>All rights reserved. Team: Eleven</p></footer>
+             <!-- /. PAGE INNER  -->
+            </div>
+         <!-- /. PAGE WRAPPER  -->
+     <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    <script src="resources/js/jquery-1.10.2.js"></script>
+      <!-- Bootstrap Js -->
+    <script src="resources/js/bootstrap.min.js"></script>
+    <!-- Metis Menu Js -->
+    <script src="resources/js/jquery.metisMenu.js"></script>
+     <!-- DATA TABLE SCRIPTS -->
+    <script src="resources/js/dataTables/jquery.dataTables.js"></script>
+    <script src="resources/js/dataTables/dataTables.bootstrap.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+         <!-- Custom Js -->
+    <script src="resources/js/custom-scripts.js"></script>
+    
+   
+ 
+</body>
+</html>

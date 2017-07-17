@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Smart Parking</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_search_result_maps">Map</string>
+
+    <string name="title_marker_user_location">Your location</string>
+
+    <string name="bundle_search_latitude">latitude</string>
+    <string name="bundle_search_longitude">longitude</string>
+    <string name="bundle_search_range">range</string>
+    <string name="bundle_parking_lots_info">parking_lots_info</string>
+
+    <string name="user_data_location">location</string>
+    <string name="user_data_range">range</string>
+
+    <string name="parking_lots_data_field_root">sensorList</string>
+    <string name="parking_lots_data_field_info_location">location</string>
+    <string name="parking_lots_data_field_info_status">status</string>
+
+    <string name="btn_findParking">Find Parking</string>
+    <string name="lbl_searchRange">Select Search Range</string>
+    <string name="lbl_miles">mile(s)</string>
+    <string name="lbl_cityZip">Where would you like to park?</string>
+    <string name="btnlbl_Next">Next</string>
+</resources>

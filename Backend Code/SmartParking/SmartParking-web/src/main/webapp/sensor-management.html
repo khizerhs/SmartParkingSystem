@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html ng-app="smartParkingAdminApp" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="resources/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <title>Smart Parking System - Sensor Management</title>
+    <!-- Bootstrap Styles-->
+    <link href="resources/css/bootstrap.css" rel="stylesheet" />
+    <!-- FontAwesome Styles-->
+    <link href="resources/css/font-awesome.css" rel="stylesheet" />
+    <!-- Morris Chart Styles-->
+    <link href="resources/js/morris/morris-0.4.3.min.css" rel="stylesheet" />
+    <!-- Custom Styles-->
+    <link href="resources/css/custom-styles.css" rel="stylesheet" />
+    <!-- Google Fonts-->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+
+    <script src="resources/js/angular-1.4.8/angular.min.js"></script>
+    <script src="resources/js/angular-google-maps-native/angular-google-maps-native.min.js"></script>
+    <script src="resources/js/angular-smart-parking-admin-sensor-management.js"></script>
+
+    <script src="resources/js/bootstrap.min.js"></script>
+
+    <script src="resources/js/cookie.js"></script>
+</head>
+<body>                                    
+    <div id="wrapper">
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="login.html">Smart Parking</a>
+            </div>
+
+            <ul class="nav navbar-top-links navbar-right">
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html" onclick="cleanUserCookie();"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+        </nav>
+
+        <!--/. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+
+                    <li>
+                        <a href="dashboard.html"><i class="fa fa-dashboard"></i> Dashboard</a>
+                    </li>
+                    <li>
+                        <a class="active-menu" href="sensor-management.html"><i class="fa fa-desktop"></i> Sensor Management</a>
+                    </li>
+
+                    <li>
+                        <a href="user-management.html"><i class="fa fa-sitemap"></i> User Management</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" ng-controller="SensorManagementPanelController as SensorManagementPanelCtrl" data-ng-init="init()">
+            <div id="page-inner" ng-cloak>
+             <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-header">
+                            Sensor Management 
+                        </h1>
+                    </div>
+                </div> 
+                 <!-- /. ROW  -->
+
+            <a data-toggle="modal" href="#myModal" class="btn btn-lg btn-primary" ng-click="SensorManagementPanelCtrl.clickAdd();">Add sensor</a>
+            <br>   
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                             Sensor List
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>Sensor ID</th>
+                                            <th>Location</th>
+                                            <th>Status</th>
+                                            <th>Cost</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="odd gradeX" ng-repeat="thisParkingLotInformation in parkingLotInformation track by $index">
+                                            <td>{{thisParkingLotInformation.sensorID}}</td>
+                                            <td>{{thisParkingLotInformation.position[0] + ', ' + thisParkingLotInformation.position[1]}}</td>
+                                            <td><span class={{statusLabels[thisParkingLotInformation.status]}}>{{statusNames[thisParkingLotInformation.status]}}</span></td>
+                                            <td class="center">{{thisParkingLotInformation.cost}}</td>
+                                            <td class="center">
+                                                <button type="button" class="btn btn-sm btn-danger" ng-click="SensorManagementPanelCtrl.clickDelete(thisParkingLotInformation);">Delete</button> 
+                                                <a data-toggle="modal" href="#myModal" class="btn btn-sm btn-info" ng-click="SensorManagementPanelCtrl.clickUpdate(thisParkingLotInformation);">Update</a>
+                                                
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!--End Advanced Tables -->
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">{{inputModalTitle}}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <!--
+                                    <p>ID</p>
+                                    <input type="text" onkeyup="value=value.replace(/[^\d]/g,'') "
+　　 onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))"  id="inputSensorID" class="form-control" placeholder="Sensor ID" ng-model="inputSensor.sensorID" required autofocus>-->
+
+                                    <p>Latitude</p>
+                                    <input type="text" onkeyup="value=value.replace(/[^\d]/g,''.) "
+　　 onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''.))"  id="inputLatitude" class="form-control" placeholder="Latitude" ng-model="inputSensor.Latitude" required>
+
+                                    <p>Longtitude</p>
+                                    <input type="text" onkeyup="value=value.replace(/[^\d]/g,''.) "
+　　 onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''.))"  id="inputLongtitude" class="form-control" placeholder="Longtitude" ng-model="inputSensor.Longtitude" required>                                   
+                                    <div ng-show="showStatusRadio">
+                                        <p>Status</p>
+                                        <select ng-model="selectedStatus" ng-options="status.label for status in statusOption"></option>
+                                        </select> 
+                                    </div>
+                                    <!--
+                                    <div ng-show="showStatusRadio">
+                                        <p>Status</p>
+                                        <div style="float: left" >
+                                            <input type="radio" name="sensorStatus" ng-model="inputSensor.Status" value="0"> Error   
+                                        </div>
+
+                                        <div style="float: left" >
+                                            <input type="radio" name="sensorStatus" ng-model="inputSensor.Status" value="1"> Available   
+                                        </div>
+
+                                        <div style="float: left" >
+                                            <input type="radio" name="sensorStatus" ng-model="inputSensor.Status" value="2"> Occupied   
+                                        </div>
+
+                                        <div style="float: left" >
+                                            <input type="radio" name="sensorStatus" ng-model="inputSensor.Status" value="3"> Paused   
+                                        </div>
+                                    </div>
+                                    -->
+
+                                    <p>Cost</p>
+                                    <input type="text" id="inputCost" class="form-control" placeholder="Cost" ng-model="inputSensor.cost" required>
+                                    <br>
+
+                                    
+                                    <!--
+                                    <p>Address</p>            
+                                    <input type="text" id="inputAddress" class="form-control" placeholder="Address" ng-model="backUpSelectedSensor.Address" required>
+                                    <br>
+
+                                    <p>Payment</p>
+                                    <input type="text" id="inputPayment" class="form-control" placeholder="Payment" ng-model="backUpSelectedSensor.Payment" required>
+                                    <br>
+
+                                    <p>Hours and places</p>
+                                    <textarea id="inputHoursPlaces" rows="5" class="form-control" placeholder="Hours and Places" ng-model="backUpSelectedSensor.HoursPlaces" required></textarea>
+                                    <br>
+                                    -->
+                                </div>
+
+                                <!--Google map-->
+                                <gm-map ng-show="showMap" style="display: block; width: 100%; height: 250px;" options="{center: [inputSensor.Latitude, inputSensor.Longtitude], zoom: 14, mapTypeId: google.maps.MapTypeId.ROADMAP}">
+
+                                    <!--Parking lot location-->
+                                    <gm-marker position="[inputSensor.Latitude, inputSensor.Longtitude]" )></gm-marker>
+
+                                </gm-map>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="SensorManagementPanelCtrl.clickCancel();">Cancel</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="SensorManagementPanelCtrl.clickOK();">OK</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+                </div>
+            </div>
+        </div>
+               
+    </div>
+        <footer><p>All rights reserved. Team: Eleven</p></footer>
+             <!-- /. PAGE INNER  -->
+    </div>
+         <!-- /. PAGE WRAPPER  -->
+     <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    <script src="resources/js/jquery-1.10.2.js"></script>
+      <!-- Bootstrap Js -->
+    <script src="resources/js/bootstrap.min.js"></script>
+    <!-- Metis Menu Js -->
+    <script src="resources/js/jquery.metisMenu.js"></script>
+     <!-- DATA TABLE SCRIPTS -->
+    <script src="resources/js/dataTables/jquery.dataTables.js"></script>
+    <script src="resources/js/dataTables/dataTables.bootstrap.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+         <!-- Custom Js -->
+    <script src="resources/js/custom-scripts.js"></script>
+    
+   
+</body>
+</html>

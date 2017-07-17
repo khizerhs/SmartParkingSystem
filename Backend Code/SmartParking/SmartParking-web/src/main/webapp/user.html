@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html ng-app="smartParkingApp">
+    <head>
+        <meta charset="utf-8">
+        <title>Smart Parking</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="resources/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+        <link href="resources/css/bootstrap.css" rel="stylesheet">
+        <!-- Bootstrap theme -->
+        <link href="resources/css/bootstrap-theme.min.css" rel="stylesheet">     
+        <!-- FontAwesome Styles-->
+        <link href="resources/css/font-awesome.css" rel="stylesheet" />        
+        <!-- Custom Styles-->
+        <link href="resources/css/custom-styles.css" rel="stylesheet" />
+        <!-- Google Fonts-->
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+
+        <!-- Custom styles for this template -->
+        <!--link href="resources/css/theme.css" rel="stylesheet"-->
+
+        <script src="resources/js/angular-1.4.8/angular.min.js"></script>
+        <script src="resources/js/angular-google-maps-native/angular-google-maps-native.min.js"></script>
+        <script src="resources/js/bootstrap.min.js"></script>
+        <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIoChtthL1AJtT0JAQpednFT0Pb5OFyrw "></script>-->
+        <script src="resources/js/angularsmartparking.js"></script>
+
+    </head>
+
+    <body >
+        <div id="wrapper" >
+            <nav class="navbar navbar-default top-navbar" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="login.html">Smart Parking</a>
+                </div>
+
+            </nav>
+        </div>
+        <div id="page-wrapper_user" ng-controller="PanelController as PanelCtrl">    
+
+            <div id="page-inner_user">
+                
+               
+                    <div class="panel panel-default" ng-show="PanelCtrl.isShowOptionsLookUp()" ng-controller="LocationController as LocationCtrl" style="text-align:center">
+                        <div class="panel-heading">
+                            Using your location or input the address you want to check out
+                        </div>
+                        <div class="panel-body">
+
+
+                            <button type="button" class="btn btn-primary btn-lg" ng-click="LocationCtrl.getCurrentPosition();">Use your location</button>
+                            <button type="button" class="btn btn-success btn-lg" ng-click="LocationCtrl.showHideAddressLookUp();">Check out address</button><br>
+
+                            <span ng-show="LocationCtrl.isShowAddressLookUp()" class="label label-info">Address:</span><input ng-show="LocationCtrl.isShowAddressLookUp()" type="text" ng-model="inputAddress" size="50">
+                            <button ng-show="LocationCtrl.isShowAddressLookUp()" type="button" class="btn btn-success" ng-click="LocationCtrl.lookUpAddress();">Go</button> 
+
+
+                        </div>
+                        <div class="panel-footer">
+
+                        </div>
+                    </div>
+                
+
+                <!--ul class="nav nav-pills" role="tablist">
+                    <li ng-class="{active:PanelCtrl.isSelected(1)}">
+                        <a href ng-click="PanelCtrl.selectTab(1)">Location</a>
+                    </li>
+    
+                    <li ng-class="{active:PanelCtrl.isSelected(2)}">
+                        <a href ng-click="PanelCtrl.selectTab(2)">Search range</a>
+                    </li>
+                </ul-->
+
+                <div class="row" ng-hide="PanelCtrl.isShowOptionsLookUp()">
+                    <!--Location page-->
+                    <!--div class="panel" ng-show="PanelCtrl.isSelected(1)" ng-controller="LocationController as LocationCtrl" style="text-align:center">
+    
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Using your location or input the address you want to check out</strong>
+                        </div>
+    
+                        <button type="button" class="btn btn-success" ng-click="LocationCtrl.getCurrentPosition();">Use your location</button>
+                        <button type="button" class="btn btn-warning" ng-click="LocationCtrl.showHideAddressLookUp();">Check out address</button><br>
+    
+                        <span ng-show="LocationCtrl.isShowAddressLookUp()" class="label label-info">Address:</span><input ng-show="LocationCtrl.isShowAddressLookUp()" type="text" ng-model="inputAddress" size="50">
+                        <button ng-show="LocationCtrl.isShowAddressLookUp()" type="button" class="btn btn-success" ng-click="LocationCtrl.lookUpAddress();">Go</button> 
+    
+                    </div>
+                    
+                    <!--Range page-->
+
+                    <div  ng-show="PanelCtrl.isSelected(2)">
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                            Parking Spots Status
+                            </div>
+                            <div class="panel-body">                                
+                                <div class="panel-body"> 
+                                    <img src="resources/icon/park-icon.png"/>Free
+                                    <img src="resources/icon/park-icon-occupied.png"/>Occupied
+                                   
+                                    <br>
+                                    <div class="alert alert-success">
+                                        <strong>Your location is: </strong> {{latitude + ', ' + longtitude}}
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <h3><span class="label label-info">Search range: {{selectedRange + " mile(s)"}} </span></h3>
+                                <input type="range" min="1" max="5" value="{{selectedRange}}}" ng-model="selectedRange">
+
+                                <div ng-controller="GooglaMapController as GoogleMapCtrl">
+                                    <button type="button" class="btn btn-success" ng-click="PanelCtrl.changeOptionsStatus();">New Search</button> 
+                                    <button type="button" class="btn btn-primary" ng-click="GoogleMapCtrl.showNavigation();">Navigation</button> 
+                                    <button type="button" class="btn btn-danger" ng-click="GoogleMapCtrl.updateParkingLot();">Update parking lot</button> 
+                                </div>
+
+
+                                <!--Google map-->
+                                <gm-map ng-controller="GooglaMapController as GoogleMapCtrl" ng-show="PanelCtrl.isSelected(2)" style="display: block; width: 100%; height: 600px;" options="{center: [latitude, longtitude], zoom: 14, mapTypeId: google.maps.MapTypeId.ROADMAP}">
+                                    <!--your location-->
+                                    <gm-marker position="[latitude, longtitude]" )></gm-marker>
+
+                                    <!--Available parking lots locations-->
+                                    <gm-marker
+                                        ng-repeat="parkingLot in parkingLots track by $index" position="parkingLot.position" options="{icon:'resources/icon/park-icon.png'}" on-click="GoogleMapCtrl.parkingLotClick(parkingLot.number)">
+
+                                        <gm-infowindow ng-show="infoVisibility[parkingLot.number]" options="{content: 'Cost: ' + parkingLots[parkingLot.number].information}"></gm-infowindow>
+
+                                        <gm-directions destination='[destinationLatitude,destinationLongtitude]' options="{origin: [latitude, longtitude], travelMode: google.maps.DirectionsTravelMode.DRIVING}">
+                                            <gm-renderer options="{polylineOptions:{strokeColor: '#0077c4', strokeWeight: 4, strokeOpacity: 1.0}}" gm-then="GoogleMapCtrl.setPanel(renderer)"></gm-renderer>
+                                        </gm-directions>  
+
+                                    </gm-marker>
+
+                                    <gm-marker
+                                        ng-repeat="occupiedParkingLot in occupiedParkingLots track by $index" position="occupiedParkingLot.position" options="{icon:'resources/icon/park-icon-occupied.png'}" on-click="GoogleMapCtrl.occupiedParkingLotClick(occupiedParkingLot.number)">
+
+                                        <gm-infowindow ng-show="infoVisibilityOccupied[occupiedParkingLot.number]" options="{content: occupiedParkingLots[occupiedParkingLot.number].information}"></gm-infowindow>
+
+                                        <gm-directions destination='[destinationLatitude,destinationLongtitude]' options="{origin: [latitude, longtitude], travelMode: google.maps.DirectionsTravelMode.DRIVING}">
+                                            <gm-renderer options="{polylineOptions:{strokeColor: '#0077c4', strokeWeight: 4, strokeOpacity: 1.0}}" gm-then="GoogleMapCtrl.setPanel(renderer)"></gm-renderer>
+                                        </gm-directions>  
+
+                                    </gm-marker>
+
+
+
+                                </gm-map>
+
+                                <div id="routes"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <footer><p>All rights reserved. Team: Eleven</p></footer>    
+                <!-- /. PAGE INNER  -->
+            </div>
+            <!-- /. ROW  -->
+        </div>
+
+    </body>
+</html>
